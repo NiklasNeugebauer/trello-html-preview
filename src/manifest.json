@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "HTML Preview for Trello",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Opens HTML attachments on Trello cards as a page in a sandboxed tab instead of downloading them.",
   "browser_specific_settings": {
     "gecko": {

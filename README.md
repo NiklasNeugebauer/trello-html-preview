@@ -1,9 +1,9 @@
 # HTML Preview for Trello
 
 Firefox extension (also works in Firefox-based browsers like Zen). Trello serves
-HTML attachments as downloads, with no preview. With this extension, clicking an
-`.html` attachment link opens it as a rendered page in a new tab, the same way a
-local file opens.
+HTML attachments as downloads, with no preview. With this extension, Trello's
+attachment viewer shows the rendered page, and "Open in new tab" opens it the same
+way a local file opens.
 
 ## How it works
 
@@ -13,8 +13,8 @@ local file opens.
   The page runs in an opaque origin, so its scripts cannot use your Trello
   session. The catch: pages that rely on `localStorage` or cookies will not
   work.
-- A content script opens matching links in a new tab instead of Trello's
-  "no preview" dialog, and strips `download` attributes.
+- A content script replaces the viewer's "no preview" message with an iframe of
+  the attachment, and strips `download` attributes from attachment links.
 
 ## Develop
 

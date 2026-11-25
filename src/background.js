@@ -11,6 +11,7 @@ const REPLACED_HEADERS = new Set([
   "content-type",
   "content-security-policy",
   "content-security-policy-report-only",
+  "x-frame-options",
 ]);
 
 browser.webRequest.onHeadersReceived.addListener(
