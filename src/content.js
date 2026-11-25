@@ -61,7 +61,22 @@ function injectPreviews() {
       message.style.display = "none";
     }
     if (frame.src !== url) frame.src = url;
+    turnDownloadIntoNewTab(message.parentElement, url);
   }
+}
+
+// The toolbar below the viewer keeps its own Download button, so the one under the
+// preview opens the page in a new tab instead.
+function turnDownloadIntoNewTab(container, url) {
+  const link = [...container.querySelectorAll("a[href]")].find(
+    (a) => isHtmlAttachment(a.href) && isDownloadRequest(a.href),
+  );
+  if (!link) return;
+  link.href = url;
+  link.removeAttribute("download");
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.textContent = "Open in new tab";
 }
 
 let scheduled = false;
