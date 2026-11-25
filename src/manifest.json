@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "HTML Preview for Trello",
+  "version": "0.1.0",
+  "description": "Opens HTML attachments on Trello cards as a page in a sandboxed tab instead of downloading them.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "trello-html-preview@niklasneugebauer",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "permissions": ["webRequest", "webRequestBlocking", "https://trello.com/*"],
+  "background": {
+    "scripts": ["shared.js", "background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://trello.com/*"],
+      "js": ["shared.js", "content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
