@@ -44,8 +44,17 @@ From the [latest release](https://github.com/NiklasNeugebauer/trello-html-previe
 
 - **Firefox 142+ / Zen:** open the `-firefox-….xpi`. It is signed as an unlisted
   add-on and updates itself from later releases.
-- **Chrome 120+:** unzip the `-chrome-….zip`, then `chrome://extensions` →
-  Developer mode → "Load unpacked". No automatic updates.
+- **Chrome / Chromium 120+:**
+  1. Unzip the `-chrome-….zip` into a folder you keep, e.g.
+     `~/.local/share/chromium-extensions/trello-html-preview/`. Chrome loads
+     the extension from that folder, so do not delete it.
+  2. `chrome://extensions` → turn on Developer mode → "Load unpacked" → pick
+     that folder.
+  3. Reload the Trello tab.
+
+  There are no automatic updates. To update, unzip the newer release into the
+  same folder, overwriting the old files, and click the reload icon on the
+  extension in `chrome://extensions`.
 
 ## Release
 
