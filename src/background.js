@@ -16,7 +16,7 @@ const REPLACED_HEADERS = new Set([
 
 browser.webRequest.onHeadersReceived.addListener(
   (details) => {
-    if (!isHtmlAttachment(details.url)) return;
+    if (!isHtmlAttachment(details.url) || isDownloadRequest(details.url)) return;
     if (details.statusCode >= 300 && details.statusCode < 400) {
       const location = details.responseHeaders.find((h) => h.name.toLowerCase() === "location");
       console.warn("HTML attachment redirected, not rewritten:", details.url, "->", location?.value);

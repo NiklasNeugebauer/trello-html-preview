@@ -14,3 +14,8 @@ function isHtmlAttachment(href) {
   const match = url.pathname.match(ATTACHMENT_PATH);
   return Boolean(match) && HTML_NAME.test(decodeURIComponent(match[1]));
 }
+
+// Trello's Download button links to the same URL with ?dl=1; that one stays a download.
+function isDownloadRequest(href) {
+  return new URL(href).searchParams.get("dl") === "1";
+}

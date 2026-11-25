@@ -6,7 +6,7 @@ for (const type of ["mousedown", "contextmenu"]) {
     type,
     (event) => {
       const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
-      if (link && isHtmlAttachment(link.href)) link.removeAttribute("download");
+      if (link && isHtmlAttachment(link.href) && !isDownloadRequest(link.href)) link.removeAttribute("download");
     },
     true,
   );
