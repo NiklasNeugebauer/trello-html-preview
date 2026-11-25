@@ -1,7 +1,8 @@
-name: Sign and attach to release
+name: Build and attach to release
 
-# Publishing a GitHub release tagged vX.Y.Z signs that version as an unlisted add-on on
-# addons.mozilla.org and attaches the .xpi plus the updates.json the manifest's update_url reads.
+# Publishing a GitHub release tagged vX.Y.Z builds both browsers at that version:
+# Firefox is signed as an unlisted add-on on addons.mozilla.org and attached together with
+# the updates.json its update_url reads; Chrome is attached as a zip for "Load unpacked".
 
 on:
   release:
@@ -11,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  sign:
+  release:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -23,25 +24,27 @@ jobs:
         with:
           node-version: 22
 
-      - name: Set version from tag
+      - name: Build
         run: |
-          version="${TAG#v}"
-          echo "VERSION=$version" >> "$GITHUB_ENV"
-          echo "ADDON_ID=$(jq -r .browser_specific_settings.gecko.id src/manifest.json)" >> "$GITHUB_ENV"
-          jq --arg v "$version" '.version = $v' src/manifest.json > manifest.tmp
-          mv manifest.tmp src/manifest.json
+          echo "VERSION=${TAG#v}" >> "$GITHUB_ENV"
+          echo "NAME=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+          VERSION="${TAG#v}" ./build.sh
 
-      - name: Sign on addons.mozilla.org
+      - name: Sign Firefox add-on on addons.mozilla.org
         env:
           WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
-        run: npx --yes web-ext@10.8.0 sign --source-dir src --channel unlisted --artifacts-dir web-ext-artifacts
+        run: npx --yes web-ext@10.8.0 sign --source-dir dist/firefox --channel unlisted --artifacts-dir web-ext-artifacts
+
+      - name: Package Chrome extension
+        run: (cd dist/chrome && zip -qr "../../$NAME-chrome-$VERSION.zip" .)
 
       - name: Attach to release
         run: |
-          xpi="${GITHUB_REPOSITORY#*/}-$VERSION.xpi"
+          xpi="$NAME-firefox-$VERSION.xpi"
           mv web-ext-artifacts/*.xpi "$xpi"
-          jq -n --arg id "$ADDON_ID" --arg v "$VERSION" \
+          addon_id=$(jq -r .browser_specific_settings.gecko.id dist/firefox/manifest.json)
+          jq -n --arg id "$addon_id" --arg v "$VERSION" \
             --arg link "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG/$xpi" \
             '{addons: {($id): {updates: [{version: $v, update_link: $link}]}}}' > updates.json
-          gh release upload "$TAG" "$xpi" updates.json --clobber
+          gh release upload "$TAG" "$xpi" "$NAME-chrome-$VERSION.zip" updates.json --clobber
