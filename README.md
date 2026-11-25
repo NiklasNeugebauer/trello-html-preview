@@ -25,16 +25,16 @@ mise exec -- web-ext run --source-dir src      # throwaway Firefox profile
 
 Or load `src/manifest.json` via `about:debugging` → "Load Temporary Add-on".
 
-## Sign and install
+## Install
 
-Signing goes through addons.mozilla.org as an unlisted add-on. Store your
-[AMO API credentials](https://addons.mozilla.org/developers/addon/api/key/)
-in the keyring once:
+Open the `.xpi` from the
+[latest release](https://github.com/NiklasNeugebauer/trello-html-preview/releases/latest)
+in Firefox 142+ or Zen. It is signed as an unlisted add-on and updates itself
+from later releases.
 
-```sh
-secret-tool store --label="AMO JWT issuer" service amo key issuer
-secret-tool store --label="AMO JWT secret" service amo key secret
-```
+## Release
 
-Then bump `version` in `src/manifest.json`, run `./sign.sh`, and open the
-resulting `.xpi` in the browser.
+Publish a GitHub release tagged `vX.Y.Z`. The workflow sets that version, signs
+it on addons.mozilla.org (repo secrets `AMO_JWT_ISSUER` / `AMO_JWT_SECRET`) and
+attaches the `.xpi` and `updates.json` to the release. Every version can only
+be signed once.
